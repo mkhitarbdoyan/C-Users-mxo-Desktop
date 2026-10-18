@@ -36,8 +36,8 @@ export default function Home() {
       <section className="relative min-h-[88vh] overflow-hidden text-white">
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1534190760961-74e8a9c8b1e4?auto=format&fit=crop&w=2200&q=80"
-            alt="Los Angeles boulevard at dusk"
+            src="/hero.jpg"
+            alt="Los Angeles city lights at dusk"
             fill
             priority
             className="hero-media object-cover"

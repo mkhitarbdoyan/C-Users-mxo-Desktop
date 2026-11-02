@@ -3,7 +3,7 @@ import Link from "next/link";
 import { JobFilters } from "@/components/JobFilters";
 import { JobList } from "@/components/JobList";
 import { PageHero } from "@/components/PageHero";
-import { filterJobs } from "@/data/jobs";
+import { listJobs } from "@/lib/listings";
 
 type JobsPageProps = {
   searchParams: Promise<{
@@ -19,9 +19,11 @@ export const metadata = {
   description: "Browse Armenian community jobs across Los Angeles on ArmJob.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function JobsPage({ searchParams }: JobsPageProps) {
   const params = await searchParams;
-  const results = filterJobs(params);
+  const results = await listJobs(params);
 
   return (
     <>

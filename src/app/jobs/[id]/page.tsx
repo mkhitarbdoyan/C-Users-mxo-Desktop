@@ -1,19 +1,17 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getJobById, jobs } from "@/data/jobs";
 import { formatJobType, formatPostedDate } from "@/lib/format";
+import { getJobById } from "@/lib/listings";
 
 type JobDetailProps = {
   params: Promise<{ id: string }>;
 };
 
-export async function generateStaticParams() {
-  return jobs.map((job) => ({ id: job.id }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: JobDetailProps) {
   const { id } = await params;
-  const job = getJobById(id);
+  const job = await getJobById(id);
   if (!job) return { title: "Job not found" };
   return {
     title: job.title,
@@ -23,7 +21,7 @@ export async function generateMetadata({ params }: JobDetailProps) {
 
 export default async function JobDetailPage({ params }: JobDetailProps) {
   const { id } = await params;
-  const job = getJobById(id);
+  const job = await getJobById(id);
   if (!job) notFound();
 
   return (

@@ -1,9 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { JobList } from "@/components/JobList";
-import { jobs } from "@/data/jobs";
-import { businesses, events, housing } from "@/data/listings";
 import { formatEventDate } from "@/lib/format";
+import {
+  listBusinesses,
+  listEvents,
+  listHousing,
+  listJobs,
+} from "@/lib/listings";
 
 const categories = [
   {
@@ -28,7 +32,15 @@ const categories = [
   },
 ];
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const [jobs, housing, events, businesses] = await Promise.all([
+    listJobs(),
+    listHousing(),
+    listEvents(),
+    listBusinesses(),
+  ]);
   const latestJobs = jobs.slice(0, 5);
 
   return (

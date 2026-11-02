@@ -1,12 +1,16 @@
 import { PageHero } from "@/components/PageHero";
-import { businesses } from "@/data/listings";
+import { listBusinesses } from "@/lib/listings";
 
 export const metadata = {
   title: "Business directory",
   description: "Armenian business directory for Los Angeles on ArmJob.",
 };
 
-export default function DirectoryPage() {
+export const dynamic = "force-dynamic";
+
+export default async function DirectoryPage() {
+  const businesses = await listBusinesses();
+
   return (
     <>
       <PageHero

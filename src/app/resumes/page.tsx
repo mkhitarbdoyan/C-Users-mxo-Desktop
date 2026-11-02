@@ -1,14 +1,18 @@
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
-import { resumes } from "@/data/listings";
 import { formatPostedDate } from "@/lib/format";
+import { listResumes } from "@/lib/listings";
 
 export const metadata = {
   title: "Resumes / Job wanted",
   description: "Job seekers posting resumes on ArmJob.",
 };
 
-export default function ResumesPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ResumesPage() {
+  const resumes = await listResumes();
+
   return (
     <>
       <PageHero

@@ -2,27 +2,40 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { jobCategories, locations } from "@/data/jobs";
+import { useRouter } from "next/navigation";
+import { jobCategories, locations } from "@/lib/listings";
 
 export function PostJobForm() {
-  const [submitted, setSubmitted] = useState(false);
+  const router = useRouter();
+  const [submittedId, setSubmittedId] = useState<string | null>(null);
+  const [error, setError] = useState("");
+  const [pending, setPending] = useState(false);
 
-  if (submitted) {
+  if (submittedId) {
     return (
       <div className="rounded border border-line bg-surface px-6 py-12 text-center">
-        <p className="section-label">Listing received</p>
+        <p className="section-label">Listing published</p>
         <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl tracking-tight text-ink">
-          Your job is ready for review
+          Your job is live on ArmJob
         </h2>
         <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted">
-          In this demo, listings are not saved to a database. In production,
-          ArmJob would publish after a quick moderation check.
+          The listing was saved to the database and linked to your account.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link href="/jobs" className="btn btn-primary">
+          <Link href={`/jobs/${submittedId}`} className="btn btn-primary">
+            View listing
+          </Link>
+          <Link href="/jobs" className="btn btn-outline">
             Browse jobs
           </Link>
-          <button type="button" className="btn btn-outline" onClick={() => setSubmitted(false)}>
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={() => {
+              setSubmittedId(null);
+              setError("");
+            }}
+          >
             Post another
           </button>
         </div>
@@ -33,9 +46,41 @@ export function PostJobForm() {
   return (
     <form
       className="grid gap-4 rounded border border-line bg-surface p-5 md:p-8"
-      onSubmit={(event) => {
+      onSubmit={async (event) => {
         event.preventDefault();
-        setSubmitted(true);
+        setPending(true);
+        setError("");
+        const form = new FormData(event.currentTarget);
+        const payload = {
+          title: String(form.get("title") ?? ""),
+          company: String(form.get("company") ?? ""),
+          location: String(form.get("location") ?? ""),
+          category: String(form.get("category") ?? ""),
+          type: String(form.get("type") ?? ""),
+          salary: String(form.get("salary") ?? ""),
+          phone: String(form.get("phone") ?? ""),
+          description: String(form.get("description") ?? ""),
+        };
+
+        const response = await fetch("/api/jobs", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        setPending(false);
+
+        if (response.status === 401) {
+          router.push("/login?callbackUrl=/jobs/post");
+          return;
+        }
+        if (!response.ok) {
+          setError(data.error || "Unable to publish job.");
+          return;
+        }
+
+        setSubmittedId(data.job.id);
+        router.refresh();
       }}
     >
       <div className="grid gap-4 md:grid-cols-2">
@@ -113,8 +158,13 @@ export function PostJobForm() {
           />
         </label>
       </div>
-      <button type="submit" className="btn btn-primary w-full md:w-auto md:justify-self-start">
-        Publish listing
+      {error ? <p className="text-sm text-brand">{error}</p> : null}
+      <button
+        type="submit"
+        className="btn btn-primary w-full md:w-auto md:justify-self-start"
+        disabled={pending}
+      >
+        {pending ? "Publishing…" : "Publish listing"}
       </button>
     </form>
   );

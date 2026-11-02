@@ -1,13 +1,17 @@
 import { PageHero } from "@/components/PageHero";
-import { cars } from "@/data/listings";
 import { formatPostedDate } from "@/lib/format";
+import { listCars } from "@/lib/listings";
 
 export const metadata = {
   title: "Cars",
   description: "Cars for sale and rideshare rentals on ArmJob.",
 };
 
-export default function CarsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function CarsPage() {
+  const cars = await listCars();
+
   return (
     <>
       <PageHero

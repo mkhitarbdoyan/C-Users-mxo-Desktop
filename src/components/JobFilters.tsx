@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { jobCategories, locations } from "@/data/jobs";
+import { jobCategories, locations } from "@/lib/listings";
 
 export function JobFilters() {
   const router = useRouter();

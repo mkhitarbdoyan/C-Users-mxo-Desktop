@@ -1,14 +1,18 @@
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
-import { housing } from "@/data/listings";
 import { formatPostedDate } from "@/lib/format";
+import { listHousing } from "@/lib/listings";
 
 export const metadata = {
   title: "Housing",
   description: "Apartments, ADUs, and rentals for the LA Armenian community.",
 };
 
-export default function HousingPage() {
+export const dynamic = "force-dynamic";
+
+export default async function HousingPage() {
+  const housing = await listHousing();
+
   return (
     <>
       <PageHero
@@ -16,8 +20,8 @@ export default function HousingPage() {
         title="Apartments & rentals"
         description="Find places near Glendale, NoHo, and the Valley — ADUs, apartments, and roommate-friendly units from community listings."
         action={
-          <Link href="/jobs/post" className="btn btn-outline">
-            List a rental
+          <Link href="/login?callbackUrl=/jobs/post" className="btn btn-outline">
+            Sign in to post
           </Link>
         }
       />

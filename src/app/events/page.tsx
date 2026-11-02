@@ -1,13 +1,17 @@
 import { PageHero } from "@/components/PageHero";
-import { events } from "@/data/listings";
 import { formatEventDate } from "@/lib/format";
+import { listEvents } from "@/lib/listings";
 
 export const metadata = {
   title: "Events",
   description: "Community events for Armenians in Los Angeles.",
 };
 
-export default function EventsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function EventsPage() {
+  const events = await listEvents();
+
   return (
     <>
       <PageHero

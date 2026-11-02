@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { AuthButtons } from "@/components/AuthButtons";
 
 const links = [
   { href: "/jobs", label: "Jobs" },
@@ -47,6 +48,7 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <AuthButtons />
           <Link href="/jobs/post" className="btn btn-primary hidden sm:inline-flex !min-h-10 !px-4 text-sm">
             Post a job
           </Link>
@@ -80,6 +82,9 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
+            <Link href="/login" className="rounded px-2 py-2.5 text-sm font-medium" onClick={() => setOpen(false)}>
+              Sign in
+            </Link>
             <Link
               href="/jobs/post"
               className="btn btn-primary mt-2 text-sm"

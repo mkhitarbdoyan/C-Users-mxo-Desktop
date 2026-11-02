@@ -59,7 +59,7 @@ export function Footer() {
       <div className="border-t border-white/10">
         <div className="site-shell flex flex-col gap-2 py-4 text-xs text-white/50 sm:flex-row sm:justify-between">
           <p>© {new Date().getFullYear()} ArmJob. Built for the LA Armenian community.</p>
-          <p>Demo product — sample listings only.</p>
+          <p>Local SQLite backend + Auth.js — seed data included.</p>
         </div>
       </div>
     </footer>

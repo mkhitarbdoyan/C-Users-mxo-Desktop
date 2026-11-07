@@ -30,7 +30,7 @@ function formatRemaining(sec: number): string {
 }
 
 export default function ExamSessionScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, q } = useLocalSearchParams<{ id: string; q?: string }>();
   const scheme = useColorScheme();
   const colors = Colors[scheme];
 
@@ -62,6 +62,19 @@ export default function ExamSessionScreen() {
       cancelled = true;
     };
   }, [load]);
+
+  /** Jump from review: /exam/:id?q=<orderIndex> */
+  useEffect(() => {
+    if (q == null || q === '') return;
+    const next = Number(Array.isArray(q) ? q[0] : q);
+    if (!Number.isFinite(next) || next < 0) return;
+    setIndex(next);
+  }, [q]);
+
+  useEffect(() => {
+    if (!exam?.items.length) return;
+    setIndex((current) => Math.min(current, exam.items.length - 1));
+  }, [exam?.items.length]);
 
   useEffect(() => {
     if (!exam || exam.status !== 'in_progress') return;

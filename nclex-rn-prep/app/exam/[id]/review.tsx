@@ -76,7 +76,12 @@ export default function ExamReviewScreen() {
           return (
             <Pressable
               key={item.questionId}
-              onPress={() => router.push(`/exam/${exam.id}`)}
+              onPress={() =>
+                router.push({
+                  pathname: '/exam/[id]',
+                  params: { id: exam.id, q: String(item.orderIndex) },
+                })
+              }
               style={[styles.row, { borderColor: colors.border, backgroundColor: colors.surface }]}
             >
               <Text style={[styles.rowTitle, { color: colors.navy }]}>

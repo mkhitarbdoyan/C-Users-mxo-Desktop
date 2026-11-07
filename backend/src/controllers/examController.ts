@@ -27,12 +27,24 @@ async function loadExamOr404(examId: string, userId: string) {
   });
 }
 
+/** Live exam payloads must not leak the key or authored rationale. */
+function mapQuestionForExam(
+  question: Parameters<typeof mapQuestion>[0],
+  includeAnswerKey: boolean
+) {
+  const full = mapQuestion(question);
+  if (includeAnswerKey) return full;
+  const { correctIndex: _correctIndex, rationale: _rationale, ...blind } = full;
+  return blind;
+}
+
 function serializeExam(
   exam: NonNullable<Awaited<ReturnType<typeof loadExamOr404>>>,
   opts?: { includeAnswerKey?: boolean }
 ) {
   const now = new Date();
   const expired = exam.status === 'in_progress' && now > exam.endsAt;
+  const includeAnswerKey = Boolean(opts?.includeAnswerKey);
   return {
     id: exam.id,
     status: expired ? 'expired' : exam.status,
@@ -42,17 +54,17 @@ function serializeExam(
     endsAt: exam.endsAt.toISOString(),
     submittedAt: exam.submittedAt?.toISOString() ?? null,
     remainingSec: exam.status === 'in_progress' ? remainingSec(exam.endsAt, now) : 0,
-    scoreCorrect: exam.scoreCorrect,
-    scoreTotal: exam.scoreTotal,
+    scoreCorrect: includeAnswerKey ? exam.scoreCorrect : null,
+    scoreTotal: includeAnswerKey ? exam.scoreTotal : null,
     items: exam.items.map((item) => ({
       orderIndex: item.orderIndex,
       questionId: item.questionId,
       selectedIndex: item.selectedIndex,
       flagged: item.flagged,
       answeredAt: item.answeredAt?.toISOString() ?? null,
-      correct: opts?.includeAnswerKey ? item.correct : undefined,
+      correct: includeAnswerKey ? item.correct : undefined,
       aiExplanation: item.aiExplanation,
-      question: mapQuestion(item.question),
+      question: mapQuestionForExam(item.question, includeAnswerKey),
     })),
     review: {
       unanswered: exam.items.filter((i) => i.selectedIndex === null).map((i) => i.questionId),
@@ -110,7 +122,7 @@ export async function startExam(req: AuthenticatedRequest, res: Response): Promi
     },
   });
 
-  res.status(201).json(serializeExam(exam));
+  res.status(201).json(serializeExam(exam, { includeAnswerKey: false }));
 }
 
 export async function getExam(req: AuthenticatedRequest, res: Response): Promise<void> {
@@ -123,7 +135,8 @@ export async function getExam(req: AuthenticatedRequest, res: Response): Promise
     res.status(404).json({ error: 'Exam not found' });
     return;
   }
-  res.json(serializeExam(exam, { includeAnswerKey: exam.status === 'submitted' }));
+  // Answer key only after the exam has been ended (submittedAt set by /end).
+  res.json(serializeExam(exam, { includeAnswerKey: exam.submittedAt != null }));
 }
 
 export async function submitAnswer(req: AuthenticatedRequest, res: Response): Promise<void> {
@@ -268,6 +281,8 @@ export async function explainAnswer(req: AuthenticatedRequest, res: Response): P
     correctIndex: item.question.correctIndex,
     selectedIndex: item.selectedIndex,
     rationale: item.question.rationale,
+    // Mid-exam: teach the concept without naming the correct option letter.
+    revealAnswerKey: false,
   });
 
   await prisma.examItem.update({

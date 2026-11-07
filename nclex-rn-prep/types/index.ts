@@ -14,6 +14,8 @@ export type Question = {
   /** Zero-based index of the correct choice. */
   correctIndex: 0 | 1 | 2 | 3;
   rationale: string;
+  /** Optional clinical image (shown mid-exam; key still blinded). */
+  imageUrl?: string | null;
 };
 
 export type Flashcard = {

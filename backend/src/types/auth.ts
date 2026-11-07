@@ -1,11 +1,16 @@
 import type { Request } from 'express';
 
-/** Public user shape returned by auth/user endpoints (no password). */
+import type { ApiNursingSystem } from '../lib/mappers';
+
 export type UserPublic = {
   id: string;
   email: string;
   name: string;
   createdAt: string;
+  studyGoal: string | null;
+  preferredCategories: ApiNursingSystem[];
+  updatedAt: string;
+  provider: 'email' | 'google';
 };
 
 export type RegisterBody = {
@@ -19,12 +24,18 @@ export type LoginBody = {
   password: string;
 };
 
+export type UpdateMeBody = {
+  name?: string;
+  email?: string | null;
+  studyGoal?: string | null;
+  preferredCategories?: ApiNursingSystem[];
+};
+
 export type AuthSuccessResponse = {
   token: string;
   user: UserPublic;
 };
 
-/** JWT payload attached after auth middleware runs. */
 export type AuthTokenPayload = {
   sub: string;
   email: string;

@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: nclex-rn-prep-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: nclex
+      POSTGRES_PASSWORD: nclex
+      POSTGRES_DB: nclex_rn_prep
+    volumes:
+      - nclex_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nclex -d nclex_rn_prep"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  nclex_pg_data:

@@ -70,6 +70,7 @@ function RootLayoutNav() {
         <Stack.Screen name="index" />
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="exam" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider>
   );

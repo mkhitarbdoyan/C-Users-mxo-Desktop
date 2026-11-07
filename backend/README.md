@@ -1,87 +1,61 @@
 # NCLEX RN Prep — Backend
 
-Minimal Express + TypeScript API for the **NCLEX RN Prep** Expo app.
-
-**Current scope:** authentication and user-info route stubs only. No questions/flashcards API and no real database yet.
+Express + TypeScript + Prisma/Postgres API for the NCLEX RN Prep Expo app.
 
 ## Stack
 
 - Node.js 20+
-- Express
-- TypeScript (`tsx` for local dev)
-- `cors`, `dotenv`
-- `jsonwebtoken` + `bcryptjs` (ready for auth implementation)
-
-## Folder structure
-
-```
-backend/
-├── .env.example
-├── package.json
-├── tsconfig.json
-├── README.md
-└── src/
-    ├── index.ts              # Server entrypoint
-    ├── app.ts                # Express app + route mounting
-    ├── controllers/          # Auth & user handlers (stubs)
-    ├── middleware/           # JWT requireAuth
-    ├── models/               # In-memory user placeholder
-    ├── routes/               # /api/auth, /api/users
-    └── types/                # Shared request/response types
-```
+- Express + TypeScript (`tsx` for local dev)
+- Prisma + PostgreSQL
+- JWT auth (`jsonwebtoken` + `bcryptjs`)
+- Optional Gemini explanations (`GEMINI_API_KEY`)
 
 ## Setup
+
+### 1. Postgres
+
+**Docker (recommended):**
+
+```bash
+cd backend
+docker compose up -d
+```
+
+**Or local Postgres** with a database/user matching `.env.example`.
+
+### 2. Env + migrate + seed
 
 ```bash
 cd backend
 cp .env.example .env
+# set JWT_SECRET and optionally GEMINI_API_KEY
 npm install
-```
-
-Edit `.env` if you want a different `PORT` or `JWT_SECRET`. `DATABASE_URL` is a placeholder and is unused for now.
-
-## Run
-
-```bash
-# Development (reload on change)
+npx prisma migrate dev
+npm run db:seed
 npm run dev
-
-# Typecheck
-npm run typecheck
-
-# Production-style
-npm run build
-npm start
 ```
 
-Server defaults to [http://localhost:4000](http://localhost:4000).
+Health: [http://localhost:4000/health](http://localhost:4000/health)
 
-## Endpoints (stubs)
+## Key endpoints
 
-| Method | Path | Auth | Status today |
-| ------ | ---- | ---- | ------------ |
-| `GET` | `/health` | No | `200` hello-world health |
-| `POST` | `/api/auth/register` | No | `501` stub (validates body) |
-| `POST` | `/api/auth/login` | No | `501` stub (validates body) |
-| `GET` | `/api/users/me` | Bearer JWT | `501` stub (middleware verifies token) |
-| `PATCH` | `/api/users/me` | Bearer JWT | `501` stub |
+| Method | Path | Auth | Purpose |
+| ------ | ---- | ---- | ------- |
+| `POST` | `/api/auth/register` | No | Create account |
+| `POST` | `/api/auth/login` | No | Login → JWT |
+| `GET` | `/api/users/me` | Yes | Current user |
+| `PATCH` | `/api/users/me` | Yes | Update profile |
+| `GET` | `/api/questions` | No | Question bank (`?system=&difficulty=`) |
+| `GET` | `/api/flashcards` | No | Flashcards (`?system=&difficulty=`) |
+| `GET` | `/api/reviews/due` | Yes | Spaced-repetition due items |
+| `POST` | `/api/reviews/:itemType/:itemId` | Yes | Record SM-2 review |
+| `POST` | `/api/exams/start` | Yes | Start timed exam |
+| `GET` | `/api/exams/:id` | Yes | Exam state |
+| `POST` | `/api/exams/:id/answers` | Yes | Submit answer |
+| `POST` | `/api/exams/:id/flag` | Yes | Flag / unflag |
+| `POST` | `/api/exams/:id/explain` | Yes | AI (Gemini) explanation |
+| `POST` | `/api/exams/:id/end` | Yes | End exam + score report |
 
-### Quick checks
+## Gemini
 
-```bash
-curl http://localhost:4000/health
-
-curl -s -X POST http://localhost:4000/api/auth/register \
-  -H 'Content-Type: application/json' \
-  -d '{"name":"Ada","email":"ada@example.com","password":"secret123"}'
-```
-
-## Next steps (not in this scaffold)
-
-1. Persist users (Postgres / SQLite + Prisma or similar)
-2. Implement register/login with `bcryptjs` + JWT
-3. Return real user profiles from `GET /users/me`
-4. Point the Expo `AuthRepository` at these endpoints
-5. Add questions / flashcards / progress APIs later
-
-The Expo app under `nclex-rn-prep/` is untouched by this scaffold.
+Set `GEMINI_API_KEY` in `.env` for free-tier explanations after each exam answer. Without a key, the API falls back to the authored rationale.

@@ -1,0 +1,163 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum NursingSystem {
+  med_surg        @map("med-surg")
+  pharmacology
+  maternity
+  psychiatric
+  fundamentals
+}
+
+enum Difficulty {
+  easy
+  medium
+  hard
+}
+
+enum AuthProvider {
+  email
+  google
+}
+
+enum ReviewItemType {
+  question
+  flashcard
+}
+
+enum ExamStatus {
+  in_progress
+  submitted
+  expired
+}
+
+model User {
+  id                   String        @id @default(uuid())
+  email                String        @unique
+  name                 String
+  passwordHash         String
+  provider             AuthProvider  @default(email)
+  studyGoal            String?
+  preferredCategories  NursingSystem[] @default([])
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  attempts         Attempt[]
+  sessions         StudySession[]
+  reviewSchedules  ReviewSchedule[]
+  examSessions     ExamSession[]
+}
+
+model Question {
+  id           String        @id
+  system       NursingSystem
+  stem         String
+  choices      Json
+  correctIndex Int
+  rationale    String
+  difficulty   Difficulty    @default(medium)
+  createdAt    DateTime      @default(now())
+
+  attempts  Attempt[]
+  examItems ExamItem[]
+}
+
+model ExamSession {
+  id            String     @id @default(uuid())
+  userId        String
+  status        ExamStatus @default(in_progress)
+  questionCount Int
+  durationSec   Int
+  startedAt     DateTime   @default(now())
+  endsAt        DateTime
+  submittedAt   DateTime?
+  scoreCorrect  Int?
+  scoreTotal    Int?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items ExamItem[]
+
+  @@index([userId, startedAt])
+}
+
+model ExamItem {
+  id             String    @id @default(uuid())
+  examSessionId  String
+  questionId     String
+  orderIndex     Int
+  selectedIndex  Int?
+  flagged        Boolean   @default(false)
+  answeredAt     DateTime?
+  correct        Boolean?
+  aiExplanation  String?
+
+  examSession ExamSession @relation(fields: [examSessionId], references: [id], onDelete: Cascade)
+  question    Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([examSessionId, questionId])
+  @@index([examSessionId, orderIndex])
+}
+
+model Flashcard {
+  id         String        @id
+  system     NursingSystem
+  front      String
+  back       String
+  difficulty Difficulty    @default(medium)
+  createdAt  DateTime      @default(now())
+}
+
+model Attempt {
+  id            String   @id @default(uuid())
+  userId        String
+  questionId    String
+  selectedIndex Int
+  correct       Boolean
+  answeredAt    DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([userId, answeredAt])
+}
+
+model StudySession {
+  id           String   @id @default(uuid())
+  userId       String
+  startedAt    DateTime
+  endedAt      DateTime
+  attemptCount Int
+  correctCount Int
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, endedAt])
+}
+
+/// SM-2 spaced repetition schedule per user + content item.
+model ReviewSchedule {
+  id             String         @id @default(uuid())
+  userId         String
+  itemType       ReviewItemType
+  itemId         String
+  easiness       Float          @default(2.5)
+  intervalDays   Int            @default(0)
+  repetitions    Int            @default(0)
+  dueAt          DateTime       @default(now())
+  lastReviewedAt DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, itemType, itemId])
+  @@index([userId, dueAt])
+}

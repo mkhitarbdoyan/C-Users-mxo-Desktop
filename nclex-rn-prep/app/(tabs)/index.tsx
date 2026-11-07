@@ -57,6 +57,9 @@ export default function HomeScreen() {
         <Link href="/flashcards" asChild>
           <PrimaryButton label="Review flashcards" variant="secondary" />
         </Link>
+        <Link href="/exam" asChild>
+          <PrimaryButton label="Exam mode" variant="secondary" />
+        </Link>
         <View style={styles.secondaryActions}>
           <Link href="/progress" asChild>
             <PrimaryButton label="Progress" variant="ghost" style={styles.flexBtn} />

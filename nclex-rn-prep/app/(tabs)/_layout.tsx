@@ -82,6 +82,19 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="exam"
+        options={{
+          title: 'Exam',
+          tabBarIcon: ({ color }) => (
+            <SymbolView
+              name={{ ios: 'timer', android: 'timer', web: 'timer' }}
+              tintColor={color}
+              size={26}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="progress"
         options={{
           title: 'Progress',

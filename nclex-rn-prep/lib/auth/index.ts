@@ -1,14 +1,11 @@
-import { createAsyncStorageAuthRepository } from '@/lib/auth/asyncStorageAuthRepository';
+import { createApiAuthRepository } from '@/lib/auth/apiAuthRepository';
 import type { AuthRepository } from '@/lib/auth/AuthRepository';
 
 export type { AuthRepository } from '@/lib/auth/AuthRepository';
 
-/**
- * Active auth repository.
- * Swap for an API / real Google OAuth implementation when ready.
- */
+/** Active auth repository — Express backend (JWT). */
 export function createAuthRepository(): AuthRepository {
-  return createAsyncStorageAuthRepository();
+  return createApiAuthRepository();
 }
 
 export const authRepository: AuthRepository = createAuthRepository();

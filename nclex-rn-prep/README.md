@@ -48,18 +48,25 @@ nclex-rn-prep/
 └── types/
 ```
 
-## Auth (local mock)
+## Backend API
 
-- Register / sign in with email + password (stored locally)
-- **Continue with Google** creates/resumes a mock Google account (`nclex.learner@gmail.com`)
-- Session persists across restarts; Sign out is on the Profile tab
-- UI talks to `AuthRepository` / `AuthContext` only — not AsyncStorage
-- Swap `createAuthRepository()` for a real API / Google SDK later
+Copy `.env.example` → `.env` and point `EXPO_PUBLIC_API_URL` at the Express server (default `http://localhost:4000`). Auth register/login now use the backend JWT API. Start the backend first (see `../backend/README.md`).
+
+## Auth
+
+- Register / sign in with email + password against the backend
+- Google sign-in is not wired to the backend yet
+- Session JWT is stored on device; Sign out is on the Profile tab
+
+## Exam mode
+
+- **Exam** tab (also linked from Home): timed sessions, flagging, review before submit, score report
+- After each answer, the app requests an AI explanation (`POST /api/exams/:id/explain`, Gemini when `GEMINI_API_KEY` is set)
 
 ## Profile
 
 - Per-user profile (name, email, study goal, preferred categories)
-- Created automatically on register / first Google sign-in
+- Created automatically on register
 - Editable on the Profile tab via `UserProfileRepository`
 
 ## What’s ready vs stubbed
@@ -67,11 +74,10 @@ nclex-rn-prep/
 | Area | Status |
 | --- | --- |
 | Tab navigation + Profile | Ready |
-| Practice / Flashcards / Progress | Ready |
-| Local email auth + mock Google | Ready (device-local only) |
-| User profile storage abstraction | Ready |
-| Real OAuth / backend / email verification | Stubbed (seams only) |
-| Full NCLEX bank / quiz modes | Stubbed for later |
+| Practice / Flashcards / Progress | Ready (local content still embedded for practice tabs) |
+| Backend email auth + JWT | Ready |
+| Exam mode (timed + AI explain) | Ready |
+| Google OAuth | Stubbed |
 
 ## Typecheck
 

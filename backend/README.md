@@ -59,3 +59,7 @@ Health: [http://localhost:4000/health](http://localhost:4000/health)
 ## Gemini
 
 Set `GEMINI_API_KEY` in `.env` for free-tier explanations after each exam answer. Without a key, the API falls back to the authored rationale.
+
+## Deploy (Render + Neon)
+
+Step-by-step free-tier hosting checklist: **[DEPLOY_RENDER_NEON.md](./DEPLOY_RENDER_NEON.md)** (Neon Postgres, Render Web Service, migrate/seed, Expo `EXPO_PUBLIC_API_URL`, free-tier gotchas).

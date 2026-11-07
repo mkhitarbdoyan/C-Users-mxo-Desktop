@@ -8,7 +8,7 @@ export type ExamItemView = {
   flagged: boolean;
   answeredAt: string | null;
   aiExplanation: string | null;
-  question: Question & { difficulty?: string };
+  question: Question & { difficulty?: string; imageUrl?: string | null };
 };
 
 export type ExamSessionView = {
@@ -73,10 +73,12 @@ export function setExamFlag(examId: string, body: { questionId: string; flagged:
 }
 
 export function explainExamAnswer(examId: string, questionId: string) {
-  return apiRequest<{ questionId: string; explanation: string; source: string }>(
-    `/api/exams/${examId}/explain`,
-    { method: 'POST', body: { questionId } }
-  );
+  return apiRequest<{
+    questionId: string;
+    explanation: string;
+    source: string;
+    imageUrl: string | null;
+  }>(`/api/exams/${examId}/explain`, { method: 'POST', body: { questionId } });
 }
 
 export function endExam(examId: string) {

@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 
 import { PrimaryButton } from '@/components/PrimaryButton';
+import { QuestionImage } from '@/components/QuestionImage';
 import { SurfaceCard } from '@/components/SurfaceCard';
 import { SystemChip } from '@/components/SystemChip';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -38,6 +39,7 @@ export default function ExamSessionScreen() {
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [explanation, setExplanation] = useState<string | null>(null);
+  const [explanationImageUrl, setExplanationImageUrl] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [remaining, setRemaining] = useState(0);
@@ -97,6 +99,7 @@ export default function ExamSessionScreen() {
     if (!item) return;
     setSelected(item.selectedIndex);
     setExplanation(item.aiExplanation);
+    setExplanationImageUrl(item.question.imageUrl ?? null);
   }, [item?.questionId]);
 
   const progressLabel = useMemo(() => {
@@ -117,6 +120,7 @@ export default function ExamSessionScreen() {
       setSelected(choiceIndex);
       const explained = await explainExamAnswer(exam.id, item.questionId);
       setExplanation(explained.explanation);
+      setExplanationImageUrl(explained.imageUrl ?? item.question.imageUrl ?? null);
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not save answer');
@@ -171,6 +175,8 @@ export default function ExamSessionScreen() {
         <Text style={[styles.stem, { color: colors.navy }]}>{item.question.stem}</Text>
       </SurfaceCard>
 
+      <QuestionImage uri={item.question.imageUrl} caption="Clinical image for this item" />
+
       <View style={styles.choices}>
         {item.question.choices.map((choice, i) => {
           const isSelected = selected === i;
@@ -207,8 +213,9 @@ export default function ExamSessionScreen() {
       </View>
 
       {explanation ? (
-        <SurfaceCard style={{ backgroundColor: colors.backgroundWash }}>
+        <SurfaceCard style={{ backgroundColor: colors.backgroundWash, gap: spacing.md }}>
           <Text style={[styles.explainTitle, { color: colors.tint }]}>AI explanation</Text>
+          <QuestionImage uri={explanationImageUrl} caption="Image referenced in explanation" />
           <Text style={[styles.explainBody, { color: colors.navy }]}>{explanation}</Text>
         </SurfaceCard>
       ) : null}

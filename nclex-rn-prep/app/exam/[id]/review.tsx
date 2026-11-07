@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '@/components/PrimaryButton';
+import { QuestionImage } from '@/components/QuestionImage';
 import { SurfaceCard } from '@/components/SurfaceCard';
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
@@ -90,6 +91,14 @@ export default function ExamReviewScreen() {
               <Text style={[styles.rowMeta, { color: colors.textSecondary }]} numberOfLines={2}>
                 {item.question.stem}
               </Text>
+              {item.question.imageUrl ? (
+                <QuestionImage uri={item.question.imageUrl} caption="Has clinical image" />
+              ) : null}
+              {item.aiExplanation ? (
+                <Text style={[styles.rowMeta, { color: colors.navy }]} numberOfLines={4}>
+                  {item.aiExplanation}
+                </Text>
+              ) : null}
               <Text style={[styles.tags, { color: colors.tint }]}>{tags.join(' · ') || 'Answered'}</Text>
             </Pressable>
           );

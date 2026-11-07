@@ -61,6 +61,8 @@ model Question {
   choices      Json
   correctIndex Int
   rationale    String
+  /** Optional clinical image shown during exam / explanations. */
+  imageUrl     String?
   difficulty   Difficulty    @default(medium)
   createdAt    DateTime      @default(now())
 

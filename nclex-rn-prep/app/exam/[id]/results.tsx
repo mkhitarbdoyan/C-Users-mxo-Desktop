@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '@/components/PrimaryButton';
+import { QuestionImage } from '@/components/QuestionImage';
 import { SurfaceCard } from '@/components/SurfaceCard';
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
@@ -79,8 +80,14 @@ export default function ExamResultsScreen() {
             Q{item.orderIndex + 1} · {item.correct ? 'Correct' : 'Incorrect'}
           </Text>
           <Text style={[styles.meta, { color: colors.textSecondary }]}>{item.question.stem}</Text>
+          <QuestionImage uri={item.question.imageUrl} />
+          {item.question.rationale ? (
+            <Text style={[styles.meta, { color: colors.navy }]}>
+              Rationale: {item.question.rationale}
+            </Text>
+          ) : null}
           {item.aiExplanation ? (
-            <Text style={[styles.meta, { color: colors.navy }]}>{item.aiExplanation}</Text>
+            <Text style={[styles.meta, { color: colors.navy }]}>AI: {item.aiExplanation}</Text>
           ) : null}
         </SurfaceCard>
       ))}

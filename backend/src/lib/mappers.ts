@@ -55,6 +55,7 @@ export function mapQuestion(row: {
   choices: unknown;
   correctIndex: number;
   rationale: string;
+  imageUrl?: string | null;
   difficulty: Difficulty;
 }) {
   const choices = Array.isArray(row.choices) ? (row.choices as string[]) : [];
@@ -65,6 +66,7 @@ export function mapQuestion(row: {
     choices: choices as [string, string, string, string],
     correctIndex: row.correctIndex as 0 | 1 | 2 | 3,
     rationale: row.rationale,
+    imageUrl: row.imageUrl ?? null,
     difficulty: toApiDifficulty(row.difficulty),
   };
 }

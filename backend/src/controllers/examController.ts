@@ -275,12 +275,13 @@ export async function explainAnswer(req: AuthenticatedRequest, res: Response): P
   const choices = Array.isArray(item.question.choices)
     ? (item.question.choices as string[])
     : [];
-  const { explanation, source } = await explainExamAnswer({
+  const { explanation, source, imageUrl } = await explainExamAnswer({
     stem: item.question.stem,
     choices,
     correctIndex: item.question.correctIndex,
     selectedIndex: item.selectedIndex,
     rationale: item.question.rationale,
+    imageUrl: item.question.imageUrl,
     // Mid-exam: teach the concept without naming the correct option letter.
     revealAnswerKey: false,
   });
@@ -290,7 +291,12 @@ export async function explainAnswer(req: AuthenticatedRequest, res: Response): P
     data: { aiExplanation: explanation },
   });
 
-  res.json({ questionId: item.questionId, explanation, source });
+  res.json({
+    questionId: item.questionId,
+    explanation,
+    source,
+    imageUrl,
+  });
 }
 
 export async function endExam(req: AuthenticatedRequest, res: Response): Promise<void> {

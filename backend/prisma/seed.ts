@@ -9,6 +9,7 @@ type SeedQuestion = {
   choices: [string, string, string, string];
   correctIndex: number;
   rationale: string;
+  imageUrl?: string | null;
   difficulty: Difficulty;
 };
 
@@ -33,7 +34,8 @@ const QUESTIONS: SeedQuestion[] = [
     ],
     correctIndex: 1,
     rationale:
-      'Hypokalemia (K+ < 3.5 mEq/L) is a serious adverse effect of loop diuretics and can precipitate dysrhythmias. Report a potassium of 2.9 mEq/L promptly.',
+      'Hypokalemia (K+ < 3.5 mEq/L) is a serious adverse effect of loop diuretics and can precipitate dysrhythmias. A potassium of 2.9 mEq/L should be reported promptly because low potassium increases the risk of ventricular ectopy and digoxin toxicity if the client is also on cardiac glycosides. Mild orthostasis and a urine output of 40 mL/hr can be expected early after diuresis and are less urgent than a critically low potassium.',
+    imageUrl: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&q=80',
     difficulty: 'medium',
   },
   {
@@ -48,7 +50,8 @@ const QUESTIONS: SeedQuestion[] = [
     ],
     correctIndex: 1,
     rationale:
-      'Acute respiratory distress suggests possible PE or other airway/breathing threat. Prioritize ABCs: upright positioning and supplemental oxygen before further diagnostics.',
+      'Acute respiratory distress suggests possible pulmonary embolism or another immediate airway/breathing threat. Prioritize ABCs: place the client upright and apply supplemental oxygen before diagnostics such as ECG. Calling for help is important, but oxygenation and positioning should begin immediately while additional support is obtained. Incentive spirometry is for atelectasis prevention, not acute desaturation with chest pain.',
+    imageUrl: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?w=800&q=80',
     difficulty: 'hard',
   },
   {
@@ -93,7 +96,8 @@ const QUESTIONS: SeedQuestion[] = [
     ],
     correctIndex: 1,
     rationale:
-      'Late decelerations indicate uteroplacental insufficiency. Immediate interventions include left lateral positioning, oxygen, IV fluid bolus, and stopping oxytocin if infusing, then notifying the provider.',
+      'Late decelerations indicate uteroplacental insufficiency and fetal hypoxia risk. Immediate intrauterine resuscitation includes left lateral positioning to improve uterine perfusion, supplemental oxygen, an IV fluid bolus, and stopping oxytocin if it is infusing, then notifying the provider. Encouraging pushing or increasing oxytocin can worsen decelerations. Instrumental delivery is a provider decision after stabilization measures.',
+    imageUrl: 'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=800&q=80',
     difficulty: 'hard',
   },
   {
@@ -315,6 +319,7 @@ async function main() {
         choices: q.choices,
         correctIndex: q.correctIndex,
         rationale: q.rationale,
+        imageUrl: q.imageUrl ?? null,
         difficulty: q.difficulty,
       },
       update: {
@@ -323,6 +328,7 @@ async function main() {
         choices: q.choices,
         correctIndex: q.correctIndex,
         rationale: q.rationale,
+        imageUrl: q.imageUrl ?? null,
         difficulty: q.difficulty,
       },
     });

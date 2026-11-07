@@ -23,10 +23,18 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: colors.surface,
           borderTopColor: colors.border,
+          height: 64,
+          paddingBottom: 8,
+          paddingTop: 6,
         },
-        headerStyle: { backgroundColor: colors.surface },
-        headerTintColor: colors.text,
-        headerTitleStyle: { fontWeight: '600' },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '600',
+        },
+        headerStyle: { backgroundColor: colors.background },
+        headerShadowVisible: false,
+        headerTintColor: colors.navy,
+        headerTitleStyle: { fontWeight: '700' },
         headerShown: useClientOnlyValue(false, true),
       }}
     >

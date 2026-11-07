@@ -12,10 +12,11 @@ import {
 } from 'react-native';
 
 import { PrimaryButton } from '@/components/PrimaryButton';
+import { SurfaceCard } from '@/components/SurfaceCard';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useAuth } from '@/context/AuthContext';
 import Colors from '@/constants/Colors';
-import { radii, shadow, spacing, typography } from '@/constants/theme';
+import { radii, spacing, typography } from '@/constants/theme';
 
 export default function LoginScreen() {
   const scheme = useColorScheme();
@@ -49,9 +50,14 @@ export default function LoginScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <View style={[styles.wash, { backgroundColor: colors.backgroundWash }]}>
+          <View style={[styles.swoosh, { backgroundColor: colors.tint, opacity: 0.14 }]} />
+          <View style={[styles.swooshAlt, { backgroundColor: colors.tintAlt, opacity: 0.12 }]} />
+        </View>
+
+        <SurfaceCard style={styles.card}>
           <Text style={[styles.brand, { color: colors.tint }]}>NCLEX RN Prep</Text>
-          <Text style={[styles.title, { color: colors.text }]}>Welcome back</Text>
+          <Text style={[styles.title, { color: colors.navy }]}>Welcome back</Text>
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
             Sign in locally to continue studying. Sessions stay on this device.
           </Text>
@@ -92,13 +98,13 @@ export default function LoginScreen() {
 
           <Text style={[styles.footer, { color: colors.textSecondary }]}>
             New here?{' '}
-            <Link href="/(auth)/register" style={{ color: colors.tint, fontWeight: '600' }}>
+            <Link href="/(auth)/register" style={{ color: colors.tint, fontWeight: '700' }}>
               Create an account
             </Link>
           </Text>
 
           {busy ? <ActivityIndicator color={colors.tint} style={{ marginTop: spacing.sm }} /> : null}
-        </View>
+        </SurfaceCard>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -114,15 +120,15 @@ function Field({
 } & ComponentProps<typeof TextInput>) {
   return (
     <View style={styles.field}>
-      <Text style={[styles.label, { color: colors.textSecondary }]}>{label}</Text>
+      <Text style={[styles.label, { color: colors.textMuted }]}>{label}</Text>
       <TextInput
-        placeholderTextColor={colors.tabIconDefault}
+        placeholderTextColor={colors.textMuted}
         style={[
           styles.input,
           {
-            color: colors.text,
-            borderColor: colors.border,
-            backgroundColor: colors.background,
+            color: colors.navy,
+            borderColor: colors.borderStrong,
+            backgroundColor: colors.backgroundWash,
           },
         ]}
         {...inputProps}
@@ -138,22 +144,38 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: spacing.xl,
   },
+  wash: {
+    ...StyleSheet.absoluteFill,
+    overflow: 'hidden',
+  },
+  swoosh: {
+    position: 'absolute',
+    width: 260,
+    height: 260,
+    borderRadius: 130,
+    top: -80,
+    right: -60,
+  },
+  swooshAlt: {
+    position: 'absolute',
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    bottom: 40,
+    left: -50,
+  },
   card: {
-    borderRadius: radii.lg,
-    borderWidth: 1,
-    padding: spacing.xl,
     gap: spacing.md,
-    ...shadow.card,
   },
   brand: {
     fontSize: 13,
     fontWeight: '700',
-    letterSpacing: 1.1,
+    letterSpacing: 1.2,
     textTransform: 'uppercase',
   },
   title: {
-    ...typography.title,
-    fontSize: 26,
+    ...typography.display,
+    fontSize: 28,
   },
   subtitle: {
     ...typography.body,
@@ -166,7 +188,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderRadius: radii.md,
+    borderRadius: radii.pill,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
     fontSize: 16,
@@ -174,7 +196,7 @@ const styles = StyleSheet.create({
   },
   error: {
     ...typography.caption,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   footer: {
     ...typography.body,

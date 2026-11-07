@@ -28,7 +28,7 @@ export default function FlashcardsScreen() {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
-      <Text style={[styles.counter, { color: colors.textSecondary }]}>
+      <Text style={[styles.counter, { color: colors.textMuted }]}>
         Card {index + 1} of {FLASHCARDS.length}
       </Text>
       <SystemChip system={card.system} />
@@ -37,25 +37,32 @@ export default function FlashcardsScreen() {
         onPress={() => setFlipped((f) => !f)}
         style={[
           styles.card,
+          shadow.card,
           {
-            backgroundColor: flipped ? colors.accentSoft : colors.surface,
+            backgroundColor: flipped ? colors.backgroundWash : colors.surface,
             borderColor: colors.border,
           },
         ]}
         accessibilityRole="button"
         accessibilityLabel={flipped ? 'Show term' : 'Show definition'}
       >
+        <View style={[styles.swoosh, { backgroundColor: colors.tintAlt, opacity: 0.1 }]} />
         <Text style={[styles.sideLabel, { color: colors.tint }]}>
           {flipped ? 'Definition' : 'Concept'}
         </Text>
-        <Text style={[styles.cardText, { color: colors.text }]}>
+        <Text style={[styles.cardText, { color: colors.navy }]}>
           {flipped ? card.back : card.front}
         </Text>
-        <Text style={[styles.hint, { color: colors.textSecondary }]}>Tap to flip</Text>
+        <Text style={[styles.hint, { color: colors.textMuted }]}>Tap to flip</Text>
       </Pressable>
 
       <View style={styles.nav}>
-        <PrimaryButton label="Previous" variant="secondary" onPress={() => go(-1)} style={styles.navBtn} />
+        <PrimaryButton
+          label="Previous"
+          variant="secondary"
+          onPress={() => go(-1)}
+          style={styles.navBtn}
+        />
         <PrimaryButton label="Next" onPress={() => go(1)} style={styles.navBtn} />
       </View>
       <PrimaryButton
@@ -80,23 +87,31 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     minHeight: 280,
-    borderRadius: radii.lg,
+    borderRadius: radii.xl,
     borderWidth: 1,
     padding: spacing.xl,
     justifyContent: 'center',
     gap: spacing.lg,
-    ...shadow.card,
+    overflow: 'hidden',
+  },
+  swoosh: {
+    position: 'absolute',
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    top: -50,
+    right: -40,
   },
   sideLabel: {
     fontSize: 12,
     fontWeight: '700',
-    letterSpacing: 1,
+    letterSpacing: 1.2,
     textTransform: 'uppercase',
   },
   cardText: {
     fontSize: 22,
     lineHeight: 32,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   hint: {
     ...typography.caption,

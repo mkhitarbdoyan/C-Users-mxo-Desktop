@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 
 import { PrimaryButton } from '@/components/PrimaryButton';
+import { SurfaceCard } from '@/components/SurfaceCard';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useAuth } from '@/context/AuthContext';
 import { useProfile } from '@/context/ProfileContext';
@@ -101,7 +102,7 @@ export default function ProfileScreen() {
       contentContainerStyle={styles.content}
       keyboardShouldPersistTaps="handled"
     >
-      <Text style={[styles.title, { color: colors.text }]}>
+      <Text style={[styles.title, { color: colors.navy }]}>
         {isEmpty ? 'Set up your profile' : 'Your profile'}
       </Text>
       <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
@@ -109,17 +110,17 @@ export default function ProfileScreen() {
       </Text>
 
       {isEmpty && !editing ? (
-        <View style={[styles.empty, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Text style={[styles.emptyTitle, { color: colors.text }]}>No profile yet</Text>
+        <SurfaceCard style={{ gap: spacing.md }}>
+          <Text style={[styles.emptyTitle, { color: colors.navy }]}>No profile yet</Text>
           <Text style={[styles.emptyBody, { color: colors.textSecondary }]}>
             Add your name, study goal, and preferred categories to personalize practice later.
           </Text>
           <PrimaryButton label="Create profile" onPress={() => setEditing(true)} />
-        </View>
+        </SurfaceCard>
       ) : null}
 
       {(editing || profile) && (
-        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <SurfaceCard style={{ gap: spacing.md }}>
           {editing ? (
             <>
               <Field label="Name *" value={name} onChangeText={setName} colors={colors} />
@@ -138,9 +139,7 @@ export default function ProfileScreen() {
                 colors={colors}
                 placeholder="e.g. Pass by June 2027"
               />
-              <Text style={[styles.label, { color: colors.textSecondary }]}>
-                Preferred categories
-              </Text>
+              <Text style={[styles.label, { color: colors.textMuted }]}>Preferred categories</Text>
               <View style={styles.chips}>
                 {NURSING_SYSTEMS.map((system) => {
                   const selected = categories.includes(system);
@@ -150,16 +149,17 @@ export default function ProfileScreen() {
                       onPress={() => toggleCategory(system)}
                       style={[
                         styles.chip,
+                        shadow.soft,
                         {
-                          backgroundColor: selected ? colors.tint : colors.chip,
-                          borderColor: selected ? colors.tint : colors.border,
+                          backgroundColor: selected ? colors.tint : colors.surface,
+                          borderColor: selected ? colors.tint : colors.borderStrong,
                         },
                       ]}
                     >
                       <Text
                         style={[
                           styles.chipLabel,
-                          { color: selected ? '#FFFFFF' : colors.tint },
+                          { color: selected ? '#FFFFFF' : colors.navy },
                         ]}
                       >
                         {NURSING_SYSTEM_LABELS[system]}
@@ -185,12 +185,12 @@ export default function ProfileScreen() {
                 }
                 colors={colors}
               />
-              <Text style={[styles.updated, { color: colors.textSecondary }]}>
+              <Text style={[styles.updated, { color: colors.textMuted }]}>
                 Updated {new Date(profile!.updatedAt).toLocaleString()}
               </Text>
             </>
           )}
-        </View>
+        </SurfaceCard>
       )}
 
       {error ? <Text style={[styles.feedback, { color: colors.error }]}>{error}</Text> : null}
@@ -247,15 +247,15 @@ function Field({
 } & ComponentProps<typeof TextInput>) {
   return (
     <View style={styles.field}>
-      <Text style={[styles.label, { color: colors.textSecondary }]}>{label}</Text>
+      <Text style={[styles.label, { color: colors.textMuted }]}>{label}</Text>
       <TextInput
-        placeholderTextColor={colors.tabIconDefault}
+        placeholderTextColor={colors.textMuted}
         style={[
           styles.input,
           {
-            color: colors.text,
-            borderColor: colors.border,
-            backgroundColor: colors.background,
+            color: colors.navy,
+            borderColor: colors.borderStrong,
+            backgroundColor: colors.backgroundWash,
           },
         ]}
         {...inputProps}
@@ -275,8 +275,8 @@ function ReadRow({
 }) {
   return (
     <View style={styles.readRow}>
-      <Text style={[styles.label, { color: colors.textSecondary }]}>{label}</Text>
-      <Text style={[styles.readValue, { color: colors.text }]}>{value}</Text>
+      <Text style={[styles.label, { color: colors.textMuted }]}>{label}</Text>
+      <Text style={[styles.readValue, { color: colors.navy }]}>{value}</Text>
     </View>
   );
 }
@@ -295,28 +295,13 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.title,
-    fontSize: 24,
   },
   subtitle: {
     ...typography.body,
     marginTop: -spacing.sm,
   },
-  empty: {
-    borderRadius: radii.lg,
-    borderWidth: 1,
-    padding: spacing.xl,
-    gap: spacing.md,
-    ...shadow.card,
-  },
   emptyTitle: { ...typography.heading },
   emptyBody: { ...typography.body },
-  card: {
-    borderRadius: radii.lg,
-    borderWidth: 1,
-    padding: spacing.xl,
-    gap: spacing.md,
-    ...shadow.card,
-  },
   field: { gap: spacing.xs },
   label: {
     ...typography.caption,
@@ -324,7 +309,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderRadius: radii.md,
+    borderRadius: radii.pill,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
     fontSize: 16,
@@ -338,7 +323,7 @@ const styles = StyleSheet.create({
   chip: {
     borderWidth: 1,
     borderRadius: radii.pill,
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
   },
   chipLabel: {
@@ -348,7 +333,7 @@ const styles = StyleSheet.create({
   readRow: { gap: 2 },
   readValue: {
     ...typography.body,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   updated: {
     ...typography.caption,
@@ -356,7 +341,7 @@ const styles = StyleSheet.create({
   },
   feedback: {
     ...typography.caption,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   actions: {
     gap: spacing.sm,

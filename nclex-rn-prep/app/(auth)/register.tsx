@@ -12,10 +12,11 @@ import {
 } from 'react-native';
 
 import { PrimaryButton } from '@/components/PrimaryButton';
+import { SurfaceCard } from '@/components/SurfaceCard';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useAuth } from '@/context/AuthContext';
 import Colors from '@/constants/Colors';
-import { radii, shadow, spacing, typography } from '@/constants/theme';
+import { radii, spacing, typography } from '@/constants/theme';
 
 export default function RegisterScreen() {
   const scheme = useColorScheme();
@@ -50,10 +51,15 @@ export default function RegisterScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Text style={[styles.title, { color: colors.text }]}>Create your account</Text>
+        <View style={[styles.wash, { backgroundColor: colors.backgroundWash }]}>
+          <View style={[styles.swoosh, { backgroundColor: colors.tintAlt, opacity: 0.14 }]} />
+        </View>
+
+        <SurfaceCard style={styles.card}>
+          <Text style={[styles.brand, { color: colors.tint }]}>NCLEX RN Prep</Text>
+          <Text style={[styles.title, { color: colors.navy }]}>Create your account</Text>
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-            Local registration only — no server yet. A study profile is created automatically.
+            Local registration only — a study profile is created automatically.
           </Text>
 
           <Field label="Name" value={name} onChangeText={setName} colors={colors} autoComplete="name" />
@@ -85,13 +91,13 @@ export default function RegisterScreen() {
 
           <Text style={[styles.footer, { color: colors.textSecondary }]}>
             Already have an account?{' '}
-            <Link href="/(auth)/login" style={{ color: colors.tint, fontWeight: '600' }}>
+            <Link href="/(auth)/login" style={{ color: colors.tint, fontWeight: '700' }}>
               Sign in
             </Link>
           </Text>
 
           {busy ? <ActivityIndicator color={colors.tint} style={{ marginTop: spacing.sm }} /> : null}
-        </View>
+        </SurfaceCard>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -107,15 +113,15 @@ function Field({
 } & ComponentProps<typeof TextInput>) {
   return (
     <View style={styles.field}>
-      <Text style={[styles.label, { color: colors.textSecondary }]}>{label}</Text>
+      <Text style={[styles.label, { color: colors.textMuted }]}>{label}</Text>
       <TextInput
-        placeholderTextColor={colors.tabIconDefault}
+        placeholderTextColor={colors.textMuted}
         style={[
           styles.input,
           {
-            color: colors.text,
-            borderColor: colors.border,
-            backgroundColor: colors.background,
+            color: colors.navy,
+            borderColor: colors.borderStrong,
+            backgroundColor: colors.backgroundWash,
           },
         ]}
         {...inputProps}
@@ -131,16 +137,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: spacing.xl,
   },
+  wash: {
+    ...StyleSheet.absoluteFill,
+    overflow: 'hidden',
+  },
+  swoosh: {
+    position: 'absolute',
+    width: 240,
+    height: 240,
+    borderRadius: 120,
+    top: -70,
+    right: -50,
+  },
   card: {
-    borderRadius: radii.lg,
-    borderWidth: 1,
-    padding: spacing.xl,
     gap: spacing.md,
-    ...shadow.card,
+  },
+  brand: {
+    fontSize: 13,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
   },
   title: {
-    ...typography.title,
-    fontSize: 26,
+    ...typography.display,
+    fontSize: 28,
   },
   subtitle: {
     ...typography.body,
@@ -153,7 +173,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderRadius: radii.md,
+    borderRadius: radii.pill,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
     fontSize: 16,
@@ -161,7 +181,7 @@ const styles = StyleSheet.create({
   },
   error: {
     ...typography.caption,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   footer: {
     ...typography.body,

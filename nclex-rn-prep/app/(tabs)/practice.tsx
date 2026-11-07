@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '@/components/PrimaryButton';
+import { SurfaceCard } from '@/components/SurfaceCard';
 import { SystemChip } from '@/components/SystemChip';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useProgress } from '@/context/ProgressContext';
@@ -52,17 +53,30 @@ export default function PracticeScreen() {
     resetSelection();
   }, [endSession, index, resetSelection]);
 
+  const progressRatio = (index + (submitted ? 1 : 0)) / QUESTIONS.length;
+
   return (
     <ScrollView
       style={[styles.scroll, { backgroundColor: colors.background }]}
       contentContainerStyle={styles.content}
     >
-      <Text style={[styles.progress, { color: colors.textSecondary }]}>{progressLabel}</Text>
-      <SystemChip system={question.system} />
-
-      <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-        <Text style={[styles.stem, { color: colors.text }]}>{question.stem}</Text>
+      <View style={styles.topMeta}>
+        <Text style={[styles.progress, { color: colors.textMuted }]}>{progressLabel}</Text>
+        <SystemChip system={question.system} />
       </View>
+
+      <View style={[styles.track, { backgroundColor: colors.border }]}>
+        <View
+          style={[
+            styles.trackFill,
+            { width: `${Math.min(100, Math.round(progressRatio * 100))}%`, backgroundColor: colors.tint },
+          ]}
+        />
+      </View>
+
+      <SurfaceCard>
+        <Text style={[styles.stem, { color: colors.navy }]}>{question.stem}</Text>
+      </SurfaceCard>
 
       <View style={styles.choices}>
         {question.choices.map((choice, i) => {
@@ -70,15 +84,24 @@ export default function PracticeScreen() {
           const showResult = submitted;
           let borderColor = colors.border;
           let backgroundColor = colors.surface;
+          let letterBg = colors.accentSoft;
+          let letterColor = colors.tint;
+
           if (showResult && i === question.correctIndex) {
             borderColor = colors.success;
             backgroundColor = colors.successBg;
+            letterBg = colors.success;
+            letterColor = '#FFFFFF';
           } else if (showResult && isSelected && !isCorrect) {
             borderColor = colors.error;
             backgroundColor = colors.errorBg;
+            letterBg = colors.error;
+            letterColor = '#FFFFFF';
           } else if (isSelected) {
             borderColor = colors.tint;
             backgroundColor = colors.accentSoft;
+            letterBg = colors.tint;
+            letterColor = '#FFFFFF';
           }
 
           return (
@@ -86,28 +109,27 @@ export default function PracticeScreen() {
               key={`${question.id}-${i}`}
               disabled={submitted}
               onPress={() => setSelected(i)}
-              style={[styles.choice, { borderColor, backgroundColor }]}
+              style={[styles.choice, shadow.soft, { borderColor, backgroundColor }]}
               accessibilityRole="button"
               accessibilityState={{ selected: isSelected }}
             >
-              <Text style={[styles.choiceLetter, { color: colors.tint }]}>
-                {String.fromCharCode(65 + i)}
-              </Text>
-              <Text style={[styles.choiceText, { color: colors.text }]}>{choice}</Text>
+              <View style={[styles.choiceLetterWrap, { backgroundColor: letterBg }]}>
+                <Text style={[styles.choiceLetter, { color: letterColor }]}>
+                  {String.fromCharCode(65 + i)}
+                </Text>
+              </View>
+              <Text style={[styles.choiceText, { color: colors.navy }]}>{choice}</Text>
             </Pressable>
           );
         })}
       </View>
 
       {submitted ? (
-        <View
-          style={[
-            styles.rationale,
-            {
-              backgroundColor: isCorrect ? colors.successBg : colors.errorBg,
-              borderColor: isCorrect ? colors.success : colors.error,
-            },
-          ]}
+        <SurfaceCard
+          style={{
+            backgroundColor: isCorrect ? colors.successBg : colors.errorBg,
+            borderColor: isCorrect ? colors.success : colors.error,
+          }}
         >
           <Text
             style={[
@@ -117,8 +139,8 @@ export default function PracticeScreen() {
           >
             {isCorrect ? 'Correct' : 'Incorrect'}
           </Text>
-          <Text style={[styles.rationaleBody, { color: colors.text }]}>{question.rationale}</Text>
-        </View>
+          <Text style={[styles.rationaleBody, { color: colors.navy }]}>{question.rationale}</Text>
+        </SurfaceCard>
       ) : null}
 
       <View style={styles.actions}>
@@ -131,7 +153,7 @@ export default function PracticeScreen() {
           />
         )}
         {openSessionAttempts.length > 0 ? (
-          <Text style={[styles.sessionHint, { color: colors.textSecondary }]}>
+          <Text style={[styles.sessionHint, { color: colors.textMuted }]}>
             Session answers: {openSessionAttempts.length}
           </Text>
         ) : null}
@@ -147,21 +169,27 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xxl,
     gap: spacing.md,
   },
+  topMeta: {
+    gap: spacing.sm,
+  },
   progress: {
     ...typography.caption,
     fontWeight: '600',
   },
-  card: {
-    borderRadius: radii.lg,
-    borderWidth: 1,
-    padding: spacing.xl,
-    ...shadow.card,
+  track: {
+    height: 6,
+    borderRadius: radii.pill,
+    overflow: 'hidden',
+  },
+  trackFill: {
+    height: '100%',
+    borderRadius: radii.pill,
   },
   stem: {
     ...typography.body,
     fontSize: 17,
     lineHeight: 26,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   choices: {
     gap: spacing.sm,
@@ -169,29 +197,30 @@ const styles = StyleSheet.create({
   choice: {
     flexDirection: 'row',
     gap: spacing.md,
-    alignItems: 'flex-start',
-    borderWidth: 1.5,
-    borderRadius: radii.md,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: radii.lg,
     padding: spacing.lg,
+  },
+  choiceLetterWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   choiceLetter: {
     fontWeight: '700',
-    fontSize: 15,
-    width: 20,
+    fontSize: 14,
   },
   choiceText: {
     flex: 1,
     ...typography.body,
   },
-  rationale: {
-    borderWidth: 1,
-    borderRadius: radii.md,
-    padding: spacing.lg,
-    gap: spacing.sm,
-  },
   rationaleTitle: {
     fontWeight: '700',
     fontSize: 15,
+    marginBottom: spacing.sm,
   },
   rationaleBody: {
     ...typography.body,

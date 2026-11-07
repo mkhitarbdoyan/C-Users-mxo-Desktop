@@ -1,17 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import Colors from '@/constants/Colors';
-import { radii, spacing } from '@/constants/theme';
 import { useColorScheme } from '@/components/useColorScheme';
+import Colors from '@/constants/Colors';
+import { NURSING_SYSTEM_LABELS } from '@/constants/nursingSystems';
+import { radii, spacing } from '@/constants/theme';
 import type { NursingSystem } from '@/types';
-
-const LABELS: Record<NursingSystem, string> = {
-  'med-surg': 'Med-Surg',
-  pharmacology: 'Pharmacology',
-  maternity: 'Maternity',
-  psychiatric: 'Psychiatric',
-  fundamentals: 'Fundamentals',
-};
 
 export function SystemChip({ system }: { system: NursingSystem }) {
   const scheme = useColorScheme();
@@ -19,7 +12,9 @@ export function SystemChip({ system }: { system: NursingSystem }) {
 
   return (
     <View style={[styles.chip, { backgroundColor: colors.chip, borderColor: colors.border }]}>
-      <Text style={[styles.label, { color: colors.tint }]}>{LABELS[system]}</Text>
+      <Text style={[styles.label, { color: colors.tint }]}>
+        {NURSING_SYSTEM_LABELS[system]}
+      </Text>
     </View>
   );
 }

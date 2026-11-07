@@ -1,13 +1,19 @@
+import { Redirect, Tabs } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
-import { Tabs } from 'expo-router';
 
 import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+import { useColorScheme } from '@/components/useColorScheme';
+import { useAuth } from '@/context/AuthContext';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme];
+  const { ready, session } = useAuth();
+
+  if (ready && !session) {
+    return <Redirect href="/(auth)/login" />;
+  }
 
   return (
     <Tabs
@@ -43,7 +49,11 @@ export default function TabLayout() {
           title: 'Practice',
           tabBarIcon: ({ color }) => (
             <SymbolView
-              name={{ ios: 'list.bullet.clipboard', android: 'assignment', web: 'assignment' }}
+              name={{
+                ios: 'list.bullet.clipboard',
+                android: 'assignment',
+                web: 'assignment',
+              }}
               tintColor={color}
               size={26}
             />
@@ -70,6 +80,19 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <SymbolView
               name={{ ios: 'chart.bar.fill', android: 'bar_chart', web: 'bar_chart' }}
+              tintColor={color}
+              size={26}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color }) => (
+            <SymbolView
+              name={{ ios: 'person.fill', android: 'person', web: 'person' }}
               tintColor={color}
               size={26}
             />

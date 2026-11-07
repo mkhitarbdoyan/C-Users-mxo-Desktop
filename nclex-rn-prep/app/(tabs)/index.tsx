@@ -3,6 +3,8 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { useColorScheme } from '@/components/useColorScheme';
+import { useAuth } from '@/context/AuthContext';
+import { useProfile } from '@/context/ProfileContext';
 import { useProgress } from '@/context/ProgressContext';
 import Colors from '@/constants/Colors';
 import { radii, shadow, spacing, typography } from '@/constants/theme';
@@ -12,7 +14,11 @@ import { QUESTIONS } from '@/data/questions';
 export default function HomeScreen() {
   const scheme = useColorScheme();
   const colors = Colors[scheme];
+  const { session } = useAuth();
+  const { profile } = useProfile();
   const { stats, ready } = useProgress();
+
+  const greetingName = profile?.name || session?.user.name;
 
   return (
     <ScrollView
@@ -22,11 +28,13 @@ export default function HomeScreen() {
       <View style={[styles.hero, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         <Text style={[styles.brand, { color: colors.tint }]}>NCLEX RN Prep</Text>
         <Text style={[styles.headline, { color: colors.text }]}>
-          Practice calmly. Build clinical judgment.
+          {greetingName
+            ? `Hi ${greetingName.split(' ')[0]} — practice calmly.`
+            : 'Practice calmly. Build clinical judgment.'}
         </Text>
         <Text style={[styles.support, { color: colors.textSecondary }]}>
-          Offline sample questions, flashcards, and local progress tracking — a clean starter for
-          RN exam study.
+          Offline sample questions, flashcards, local progress, and a study profile — a clean
+          starter for RN exam study.
         </Text>
       </View>
 
@@ -39,6 +47,9 @@ export default function HomeScreen() {
         </Link>
         <Link href="/progress" asChild>
           <PrimaryButton label="View progress" variant="ghost" />
+        </Link>
+        <Link href="/profile" asChild>
+          <PrimaryButton label="Edit profile" variant="ghost" />
         </Link>
       </View>
 

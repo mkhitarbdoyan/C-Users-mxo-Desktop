@@ -5,13 +5,15 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/components/useColorScheme';
+import { AuthProvider } from '@/context/AuthContext';
+import { ProfileProvider } from '@/context/ProfileContext';
 import { ProgressProvider } from '@/context/ProgressContext';
 import Colors from '@/constants/Colors';
 
 export { ErrorBoundary } from 'expo-router';
 
 export const unstable_settings = {
-  anchor: '(tabs)',
+  anchor: 'index',
 };
 
 SplashScreen.preventAutoHideAsync();
@@ -36,9 +38,13 @@ export default function RootLayout() {
   }
 
   return (
-    <ProgressProvider>
-      <RootLayoutNav />
-    </ProgressProvider>
+    <AuthProvider>
+      <ProfileProvider>
+        <ProgressProvider>
+          <RootLayoutNav />
+        </ProgressProvider>
+      </ProfileProvider>
+    </AuthProvider>
   );
 }
 
@@ -60,8 +66,10 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={navTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(tabs)" />
       </Stack>
     </ThemeProvider>
   );

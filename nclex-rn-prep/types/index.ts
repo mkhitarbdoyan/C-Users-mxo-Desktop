@@ -50,3 +50,47 @@ export type ProgressStats = {
   accuracyPercent: number | null;
   recentSessions: SessionSummary[];
 };
+
+/** Local study profile — persisted via UserProfileRepository (per auth user). */
+export type UserProfile = {
+  name: string;
+  email: string | null;
+  /** Free-text goal or target exam date (e.g. "Pass by June 2027"). */
+  studyGoal: string | null;
+  preferredCategories: NursingSystem[];
+  updatedAt: string; // ISO timestamp
+};
+
+/** Writable profile fields (updatedAt is set by the repository/context). */
+export type UserProfileInput = {
+  name: string;
+  email?: string | null;
+  studyGoal?: string | null;
+  preferredCategories: NursingSystem[];
+};
+
+export type AuthProviderId = 'email' | 'google';
+
+export type AuthUser = {
+  id: string;
+  email: string;
+  name: string;
+  provider: AuthProviderId;
+};
+
+export type AuthSession = {
+  token: string;
+  user: AuthUser;
+  createdAt: string;
+};
+
+export type RegisterInput = {
+  name: string;
+  email: string;
+  password: string;
+};
+
+export type LoginInput = {
+  email: string;
+  password: string;
+};

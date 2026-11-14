@@ -6,9 +6,24 @@ export type NursingSystem =
   | 'psychiatric'
   | 'fundamentals';
 
+/** Clinical topic tags for Learn guides and question filters. */
+export type TopicCategory =
+  | 'cardiac'
+  | 'respiratory'
+  | 'neuro'
+  | 'pharmacology'
+  | 'maternity'
+  | 'psychiatric'
+  | 'fundamentals'
+  | 'endocrine';
+
+export type Difficulty = 'easy' | 'medium' | 'hard';
+
 export type Question = {
   id: string;
   system: NursingSystem;
+  category?: TopicCategory;
+  difficulty?: Difficulty;
   stem: string;
   choices: [string, string, string, string];
   /** Zero-based index of the correct choice. */

@@ -8,6 +8,8 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q-ms-01',
     system: 'med-surg',
+    category: 'cardiac',
+    difficulty: 'medium',
     stem: 'A client with heart failure is prescribed furosemide. Which finding should the nurse report to the provider immediately?',
     choices: [
       'Urine output of 40 mL/hr for the past 2 hours',
@@ -22,6 +24,8 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q-ms-02',
     system: 'med-surg',
+    category: 'respiratory',
+    difficulty: 'hard',
     stem: 'A postoperative client develops sudden dyspnea, chest pain, and anxiety. Oxygen saturation drops to 88% on room air. Which action should the nurse take first?',
     choices: [
       'Encourage incentive spirometry',
@@ -36,6 +40,8 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q-ph-01',
     system: 'pharmacology',
+    category: 'pharmacology',
+    difficulty: 'easy',
     stem: 'Before administering digoxin to an adult client, which assessment finding would cause the nurse to hold the dose and notify the provider?',
     choices: [
       'Apical pulse of 52 beats/min',
@@ -50,6 +56,8 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q-ph-02',
     system: 'pharmacology',
+    category: 'pharmacology',
+    difficulty: 'medium',
     stem: 'A client is started on warfarin after a DVT. Which teaching point is most important?',
     choices: [
       'Take an extra dose if a dose is missed earlier the same day',
@@ -64,6 +72,8 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q-mat-01',
     system: 'maternity',
+    category: 'maternity',
+    difficulty: 'hard',
     stem: 'A laboring client at 39 weeks has a fetal heart rate baseline of 140 with late decelerations. Which nursing action is the priority?',
     choices: [
       'Encourage the client to push with contractions',
@@ -78,6 +88,8 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q-mat-02',
     system: 'maternity',
+    category: 'maternity',
+    difficulty: 'medium',
     stem: 'A postpartum client 2 hours after vaginal delivery saturates a perineal pad in 15 minutes and feels lightheaded. What should the nurse do first?',
     choices: [
       'Assist the client to the bathroom to void',
@@ -92,6 +104,8 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q-psy-01',
     system: 'psychiatric',
+    category: 'psychiatric',
+    difficulty: 'easy',
     stem: 'A client with major depression says, “There’s no point in living anymore.” Which response by the nurse is most appropriate?',
     choices: [
       '“Things will look better tomorrow.”',
@@ -106,6 +120,8 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q-psy-02',
     system: 'psychiatric',
+    category: 'psychiatric',
+    difficulty: 'medium',
     stem: 'A client with schizophrenia is pacing and speaking loudly to unseen people. Which intervention is best initially?',
     choices: [
       'Argue that the voices are not real',
@@ -120,6 +136,8 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q-fun-01',
     system: 'fundamentals',
+    category: 'fundamentals',
+    difficulty: 'easy',
     stem: 'When caring for a client on contact precautions for C. difficile, which PPE practice is correct?',
     choices: [
       'Use alcohol-based hand rub after removing gloves',
@@ -134,6 +152,8 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q-fun-02',
     system: 'fundamentals',
+    category: 'fundamentals',
+    difficulty: 'medium',
     stem: 'The nurse is preparing to administer an intramuscular injection of 2 mL to an adult. Which site is preferred?',
     choices: [
       'Dorsogluteal muscle',
@@ -148,6 +168,8 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q-ms-03',
     system: 'med-surg',
+    category: 'endocrine',
+    difficulty: 'easy',
     stem: 'A client with type 1 diabetes has a blood glucose of 52 mg/dL and is diaphoretic but alert. Which action should the nurse take first?',
     choices: [
       'Administer glucagon IM',
@@ -162,6 +184,8 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q-ph-03',
     system: 'pharmacology',
+    category: 'pharmacology',
+    difficulty: 'medium',
     stem: 'A client taking lisinopril reports a persistent dry cough. What is the nurse’s best action?',
     choices: [
       'Reassure that the cough is unrelated to the medication',
@@ -172,5 +196,21 @@ export const QUESTIONS: Question[] = [
     correctIndex: 2,
     rationale:
       'A dry cough is a known ACE inhibitor adverse effect. The provider may switch to an ARB. Clients should not stop antihypertensives without guidance or increase the dose.',
+  },
+  {
+    id: 'q-neuro-01',
+    system: 'med-surg',
+    category: 'neuro',
+    difficulty: 'hard',
+    stem: 'A client arrives with sudden right-sided weakness and aphasia. Which nursing action is the priority?',
+    choices: [
+      'Offer oral fluids to prevent dehydration',
+      'Determine the time the client was last known well and prepare for stroke protocol',
+      'Ambulate the client to assess gait asymmetry',
+      'Administer aspirin before neurologic assessment',
+    ],
+    correctIndex: 1,
+    rationale:
+      'Suspected acute stroke is time-critical. Establish last known well time and activate stroke protocol for imaging and possible reperfusion. Oral intake risks aspiration with aphasia/weakness; early ambulation and empiric aspirin before assessment are unsafe.',
   },
 ];

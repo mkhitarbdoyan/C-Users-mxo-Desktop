@@ -45,6 +45,7 @@ export default function HomeScreen() {
 
         <View style={styles.pathRow}>
           <PathPill label="NCLEX-RN" colors={colors} />
+          <PathPill label="Learn" colors={colors} />
           <PathPill label="Practice" colors={colors} />
           <PathPill label="Flashcards" colors={colors} />
         </View>
@@ -59,6 +60,9 @@ export default function HomeScreen() {
         </Link>
         <Link href="/exam" asChild>
           <PrimaryButton label="Exam mode" variant="secondary" />
+        </Link>
+        <Link href="/learn" asChild>
+          <PrimaryButton label="Browse topics" variant="secondary" />
         </Link>
         <View style={styles.secondaryActions}>
           <Link href="/progress" asChild>

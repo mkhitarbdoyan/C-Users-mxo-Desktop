@@ -1,5 +1,6 @@
 import type { Response } from 'express';
 
+import { parseContentFilters } from '../lib/contentFilters';
 import { selectExamQuestions } from '../lib/examSelect';
 import { explainExamAnswer } from '../lib/gemini';
 import { mapQuestion } from '../lib/mappers';
@@ -79,7 +80,16 @@ export async function startExam(req: AuthenticatedRequest, res: Response): Promi
     return;
   }
 
-  const body = (req.body ?? {}) as { questionCount?: number; durationMinutes?: number };
+  const body = (req.body ?? {}) as {
+    questionCount?: number;
+    durationMinutes?: number;
+    categories?: string[];
+    category?: string | string[];
+    systems?: string[];
+    system?: string | string[];
+    difficulties?: string[];
+    difficulty?: string | string[];
+  };
   const questionCount = Math.min(
     MAX_QUESTION_COUNT,
     Math.max(1, Number(body.questionCount) || DEFAULT_QUESTION_COUNT)
@@ -90,9 +100,19 @@ export async function startExam(req: AuthenticatedRequest, res: Response): Promi
   );
   const durationSec = durationMinutes * 60;
 
-  const pool = await prisma.question.findMany();
+  const { where, error } = parseContentFilters(body as Record<string, unknown>);
+  if (error) {
+    res.status(400).json({ error });
+    return;
+  }
+
+  const pool = await prisma.question.findMany({ where });
   if (pool.length === 0) {
-    res.status(503).json({ error: 'Question bank is empty — run db:seed' });
+    res.status(503).json({
+      error: Object.keys(where).length
+        ? 'No questions match the selected filters'
+        : 'Question bank is empty — run db:seed',
+    });
     return;
   }
 

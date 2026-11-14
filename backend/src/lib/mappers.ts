@@ -1,4 +1,6 @@
-import type { Difficulty, NursingSystem, ReviewItemType } from '@prisma/client';
+import type { Difficulty, NursingSystem, ReviewItemType, TopicCategory } from '@prisma/client';
+
+import { toApiTopicCategory, type ApiTopicCategory } from './topics';
 
 /** API / Expo nursing system strings. */
 export type ApiNursingSystem =
@@ -9,6 +11,7 @@ export type ApiNursingSystem =
   | 'fundamentals';
 
 export type ApiDifficulty = 'easy' | 'medium' | 'hard';
+export type { ApiTopicCategory };
 
 const SYSTEM_TO_DB: Record<ApiNursingSystem, NursingSystem> = {
   'med-surg': 'med_surg',
@@ -51,6 +54,7 @@ export function toDbItemType(value: string): ReviewItemType | null {
 export function mapQuestion(row: {
   id: string;
   system: NursingSystem;
+  category?: TopicCategory;
   stem: string;
   choices: unknown;
   correctIndex: number;
@@ -62,6 +66,7 @@ export function mapQuestion(row: {
   return {
     id: row.id,
     system: toApiSystem(row.system),
+    category: row.category ? toApiTopicCategory(row.category) : null,
     stem: row.stem,
     choices: choices as [string, string, string, string],
     correctIndex: row.correctIndex as 0 | 1 | 2 | 3,

@@ -44,7 +44,13 @@ export type ExamReport = {
   >;
 };
 
-export function startExam(input?: { questionCount?: number; durationMinutes?: number }) {
+export function startExam(input?: {
+  questionCount?: number;
+  durationMinutes?: number;
+  categories?: string[];
+  systems?: string[];
+  difficulties?: string[];
+}) {
   return apiRequest<ExamSessionView>('/api/exams/start', {
     method: 'POST',
     body: input ?? {},

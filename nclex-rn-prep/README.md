@@ -1,6 +1,6 @@
 # NCLEX RN Prep
 
-Expo (React Native) TypeScript starter for NCLEX-RN exam preparation. Offline sample practice questions, nursing flashcards, local progress tracking, study profile, and mock auth.
+Expo (React Native) TypeScript app for NCLEX-RN exam preparation. Offline sample practice questions, topic learning guides, nursing flashcards, local progress tracking, study profile, Google OAuth + email auth, and timed exams.
 
 > Sample content is original study scaffolding and is **not** affiliated with NCSBN or the official NCLEX exam.
 
@@ -36,14 +36,17 @@ nclex-rn-prep/
 │   ├── index.tsx            # Auth gate redirect
 │   ├── _layout.tsx          # Providers + root stack
 │   ├── (auth)/              # Login + register
-│   └── (tabs)/              # Home / Practice / Flashcards / Progress / Profile
+│   ├── (tabs)/              # Home / Practice / Flashcards / Learn / Exam / Progress / Profile
+│   ├── exam/                # Timed exam session stack
+│   └── learn/               # Topic detail stack (`/learn/[category]`)
 ├── components/
-├── constants/               # Colors, theme, nursing system labels
+├── constants/               # Colors, theme, nursing + topic labels
 ├── context/                 # AuthProvider, ProfileProvider, ProgressProvider
-├── data/                    # Embedded questions & flashcards
+├── data/                    # Embedded questions, flashcards, topic guides
 ├── lib/
 │   ├── progressStorage.ts
-│   ├── auth/                # AuthRepository + AsyncStorage mock impl
+│   ├── api/                 # Backend client (auth, exams, content)
+│   ├── auth/                # AuthRepository (API + Google browser session)
 │   └── userProfile/         # UserProfileRepository + AsyncStorage impl
 └── types/
 ```
@@ -55,8 +58,20 @@ Copy `.env.example` → `.env` and point `EXPO_PUBLIC_API_URL` at the Express se
 ## Auth
 
 - Register / sign in with email + password against the backend
-- Google sign-in is not wired to the backend yet
+- **Continue with Google** opens the backend OAuth URL in a browser session and stores the returned JWT
+- Requires `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` on the API (see `../backend/README.md`)
 - Session JWT is stored on device; Sign out is on the Profile tab
+
+## Learn topics
+
+- **Learn** tab lists clinical categories (cardiac, respiratory, neuro, pharmacology, …)
+- Tap a category → `/learn/[category]` quick-reference conditions (key points + nursing priorities)
+- Also reachable from Home → **Browse topics**
+
+## Practice & exam filters
+
+- Practice: filter embedded questions by **category** and **difficulty**
+- Exam: same chips are sent to `POST /api/exams/start` as `categories` / `difficulties`
 
 ## Exam mode
 
@@ -74,10 +89,13 @@ Copy `.env.example` → `.env` and point `EXPO_PUBLIC_API_URL` at the Express se
 | Area | Status |
 | --- | --- |
 | Tab navigation + Profile | Ready |
+| Learn topic hub + detail guides | Ready |
 | Practice / Flashcards / Progress | Ready (local content still embedded for practice tabs) |
+| Category + difficulty filters | Ready |
 | Backend email auth + JWT | Ready |
+| Google OAuth (browser session) | Ready (needs Google Cloud credentials) |
 | Exam mode (timed + AI explain) | Ready |
-| Google OAuth | Stubbed |
+| Native Google Sign-In SDK | Optional via `POST /api/auth/google/id-token` (not wired in UI) |
 
 ## Typecheck
 

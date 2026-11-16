@@ -9,7 +9,7 @@ export interface AuthRepository {
   getSession(): Promise<AuthSession | null>;
   register(input: RegisterInput): Promise<AuthSession>;
   login(input: LoginInput): Promise<AuthSession>;
-  /** Simulated Google OAuth — creates or resumes a local Google-style account. */
+  /** Google OAuth via backend authorization URL + deep-link callback JWT. */
   signInWithGoogle(): Promise<AuthSession>;
   logout(): Promise<void>;
 }

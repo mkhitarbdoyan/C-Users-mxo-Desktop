@@ -55,7 +55,7 @@ export default function ProfileScreen() {
 
   const providerLabel = useMemo(() => {
     if (!session) return '';
-    return session.user.provider === 'google' ? 'Google (mock)' : 'Email';
+    return session.user.provider === 'google' ? 'Google' : 'Email';
   }, [session]);
 
   const toggleCategory = (system: NursingSystem) => {

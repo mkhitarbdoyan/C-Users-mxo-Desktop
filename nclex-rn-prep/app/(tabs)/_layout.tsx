@@ -82,6 +82,19 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="learn"
+        options={{
+          title: 'Learn',
+          tabBarIcon: ({ color }) => (
+            <SymbolView
+              name={{ ios: 'book.fill', android: 'menu_book', web: 'menu_book' }}
+              tintColor={color}
+              size={26}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="exam"
         options={{
           title: 'Exam',

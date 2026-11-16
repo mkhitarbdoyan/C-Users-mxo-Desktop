@@ -1,13 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Linking from 'expo-linking';
+import * as WebBrowser from 'expo-web-browser';
 
 import {
   apiRequest,
   clearStoredToken,
+  getApiBaseUrl,
   getStoredToken,
   setStoredToken,
 } from '@/lib/api/client';
 import type { AuthRepository } from '@/lib/auth/AuthRepository';
 import type { AuthSession, AuthUser, LoginInput, RegisterInput } from '@/types';
+
+WebBrowser.maybeCompleteAuthSession();
 
 const SESSION_KEY = '@nclex_rn_prep/auth_session_v1';
 
@@ -40,6 +45,19 @@ function toSession(token: string, user: ApiUser): AuthSession {
 async function persistSession(session: AuthSession): Promise<void> {
   await setStoredToken(session.token);
   await AsyncStorage.setItem(SESSION_KEY, JSON.stringify(session));
+}
+
+function parseQueryParam(url: string, key: string): string | null {
+  try {
+    const parsed = Linking.parse(url);
+    const value = parsed.queryParams?.[key];
+    if (typeof value === 'string') return value;
+    if (Array.isArray(value) && typeof value[0] === 'string') return value[0];
+  } catch {
+    // fall through
+  }
+  const match = new RegExp(`[?&#]${key}=([^&#]*)`).exec(url);
+  return match ? decodeURIComponent(match[1]) : null;
 }
 
 export function createApiAuthRepository(): AuthRepository {
@@ -95,7 +113,35 @@ export function createApiAuthRepository(): AuthRepository {
     },
 
     async signInWithGoogle() {
-      throw new Error('Google sign-in is not connected to the backend yet');
+      const redirectUri = Linking.createURL('auth/google');
+      const start = await apiRequest<{ authorizationUrl: string }>(
+        `/api/auth/google?redirect_uri=${encodeURIComponent(redirectUri)}`,
+        { skipAuth: true }
+      );
+
+      const result = await WebBrowser.openAuthSessionAsync(start.authorizationUrl, redirectUri);
+      if (result.type !== 'success' || !('url' in result) || !result.url) {
+        throw new Error('Google sign-in was cancelled');
+      }
+
+      const oauthError = parseQueryParam(result.url, 'error');
+      if (oauthError) {
+        throw new Error(oauthError);
+      }
+
+      const token = parseQueryParam(result.url, 'token');
+      if (!token) {
+        throw new Error('Google sign-in did not return a session token');
+      }
+
+      const data = await apiRequest<ApiAuthResponse>('/api/auth/session', {
+        method: 'POST',
+        body: { token },
+        skipAuth: true,
+      });
+      const session = toSession(data.token, data.user);
+      await persistSession(session);
+      return session;
     },
 
     async logout() {
@@ -103,4 +149,9 @@ export function createApiAuthRepository(): AuthRepository {
       await AsyncStorage.removeItem(SESSION_KEY);
     },
   };
+}
+
+/** Exposed for diagnostics / tests. */
+export function __getApiBaseUrlForAuth() {
+  return getApiBaseUrl();
 }

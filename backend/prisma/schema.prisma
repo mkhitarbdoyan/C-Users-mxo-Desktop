@@ -21,6 +21,18 @@ enum Difficulty {
   hard
 }
 
+/** Clinical topic tags used for practice/exam filtering (more granular than NursingSystem). */
+enum TopicCategory {
+  cardiac
+  respiratory
+  neuro
+  pharmacology
+  maternity
+  psychiatric
+  fundamentals
+  endocrine
+}
+
 enum AuthProvider {
   email
   google
@@ -41,8 +53,11 @@ model User {
   id                   String        @id @default(uuid())
   email                String        @unique
   name                 String
-  passwordHash         String
+  /** Null for Google OAuth accounts (no local password). */
+  passwordHash         String?
   provider             AuthProvider  @default(email)
+  /** Google subject (`sub`) from the userinfo / ID token. */
+  googleId             String?       @unique
   studyGoal            String?
   preferredCategories  NursingSystem[] @default([])
   createdAt            DateTime      @default(now())
@@ -55,19 +70,24 @@ model User {
 }
 
 model Question {
-  id           String        @id
+  id           String         @id
   system       NursingSystem
+  /** Clinical topic for filtering (cardiac, respiratory, neuro, …). */
+  category     TopicCategory  @default(fundamentals)
   stem         String
   choices      Json
   correctIndex Int
   rationale    String
   /** Optional clinical image shown during exam / explanations. */
   imageUrl     String?
-  difficulty   Difficulty    @default(medium)
-  createdAt    DateTime      @default(now())
+  difficulty   Difficulty     @default(medium)
+  createdAt    DateTime       @default(now())
 
   attempts  Attempt[]
   examItems ExamItem[]
+
+  @@index([category, difficulty])
+  @@index([system, difficulty])
 }
 
 model ExamSession {

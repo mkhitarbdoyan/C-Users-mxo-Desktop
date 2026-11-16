@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  email        String     @unique
+  passwordHash String
+  createdAt    DateTime   @default(now())
+  jobs         Job[]
+  resumes      Resume[]
+  housing      Housing[]
+  cars         Car[]
+  events       Event[]
+  businesses   Business[]
+}
+
+model Job {
+  id            String   @id @default(cuid())
+  title         String
+  titleHy       String?
+  company       String
+  location      String
+  type          String
+  category      String
+  description   String
+  descriptionHy String?
+  requirements  String
+  languages     String
+  salary        String?
+  contactPhone  String?
+  contactEmail  String?
+  featured      Boolean  @default(false)
+  postedAt      DateTime @default(now())
+  authorId      String
+  author        User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([location])
+  @@index([category])
+  @@index([type])
+  @@index([postedAt])
+}
+
+model Resume {
+  id         String   @id @default(cuid())
+  name       String
+  title      String
+  titleHy    String?
+  location   String
+  experience String
+  languages  String
+  postedAt   DateTime @default(now())
+  authorId   String
+  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([postedAt])
+}
+
+model Housing {
+  id          String   @id @default(cuid())
+  title       String
+  titleHy     String?
+  location    String
+  price       String
+  beds        Int
+  baths       Float
+  description String
+  postedAt    DateTime @default(now())
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([postedAt])
+}
+
+model Car {
+  id          String   @id @default(cuid())
+  title       String
+  location    String
+  price       String
+  year        Int
+  mileage     String?
+  description String
+  postedAt    DateTime @default(now())
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([postedAt])
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  titleHy     String?
+  location    String
+  date        String
+  description String
+  postedAt    DateTime @default(now())
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([date])
+}
+
+model Business {
+  id          String   @id @default(cuid())
+  name        String
+  nameHy      String?
+  category    String
+  location    String
+  phone       String
+  hours       String
+  description String
+  postedAt    DateTime @default(now())
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([category])
+}
